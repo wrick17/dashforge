@@ -53,3 +53,7 @@ body {
 	flex-direction: row;
 	flex: 1;
 }
+
+.selector {
+  flex: 1;
+}
