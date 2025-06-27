@@ -50,11 +50,12 @@ export const ResizableDivider = ({
 		}
 	}, [isDragging, handleMouseMove, handleMouseUp]);
 
-	const baseClasses = direction === "horizontal" ? "w-2" : "h-2 w-full";
+	const baseClasses =
+		direction === "horizontal" ? "w-2 cursor-col-resize" : "h-2 w-full cursor-row-resize";
 
 	return (
 		<div
-			className={`${baseClasses} bg-transparent cursor-col-resize resizable-divider ${className} ${
+			className={`${baseClasses} bg-gray-200 dark:bg-gray-800 resizable-divider ${className} ${
 				isDragging ? "dragging" : ""
 			}`}
 			onMouseDown={handleMouseDown}
