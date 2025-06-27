@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 body {
 	margin: 0;
 	color: #fff;
@@ -7,17 +9,17 @@ body {
 
 .content {
 	display: flex;
-	min-height: 100vh;
+	height: 100vh;
 	line-height: 1.1;
 	text-align: center;
 	flex-direction: column;
 	justify-content: center;
+	box-sizing: border-box;
 }
 
 .content h1 {
 	font-size: 3.6rem;
 	font-weight: 700;
-  flex: 1;
 }
 
 .content p {
@@ -27,33 +29,109 @@ body {
 }
 
 .layout {
+	position: relative;
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	align-items: space-between;
+	align-items: stretch;
+	height: 100%;
+	box-sizing: border-box;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .layout-content {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	align-items: space-between;
+	align-items: stretch;
 	flex: 1;
+	height: 100%;
+	box-sizing: border-box;
 }
 
 .renderer {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
+	height: 100%;
+	overflow: hidden;
 }
 
 .render-row {
 	display: flex;
 	flex-direction: row;
-	flex: 1;
+	overflow: hidden;
 }
 
 .selector {
-  flex: 1;
+	flex: 1;
+	height: 100%;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	padding: 1rem;
+	box-sizing: border-box;
+}
+
+/* Resizable divider styles */
+.resizable-divider {
+	transition: background-color 0.2s ease;
+	user-select: none;
+	z-index: 100;
+}
+
+.resizable-divider:hover {
+	background-color: #60a5fa;
+}
+
+.resizable-divider.dragging {
+	background-color: #3b82f6;
+}
+
+/* Prevent text selection during drag */
+.no-select {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.button-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 10px;
+	min-width: 10px;
+}
+
+.button-container button {
+	background-color: #1f2937;
+	height: 0;
+	width: 0;
+	font-size: 0;
+	border: none;
+	color: white;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: all 0.2s ease;
+
+	/* height: 32px;
+	width: 32px;
+	font-size: 2rem; */
+}
+
+.button-container:hover {
+	/* background-color: #1f2937; */
+}
+
+.button-container:hover button {
+	height: 32px;
+	width: 32px;
+	font-size: 2rem;
 }

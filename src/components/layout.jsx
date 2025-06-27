@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Renderer } from "./renderer";
+import { Plus } from "lucide-react";
 
 export const Layout = () => {
 	const [layout, setLayout] = useState([["selector"]]);
@@ -18,21 +19,45 @@ export const Layout = () => {
 
 	return (
 		<div className="layout">
-			<button type="button" onClick={() => onAdd("top")}>
-				+
-			</button>
-			<div className="layout-content">
-				<button type="button" onClick={() => onAdd("left")}>
-					+
-				</button>
-				{<Renderer layout={layout} />}
-				<button type="button" onClick={() => onAdd("right")}>
-					+
+			<div className="button-container">
+				<button
+					type="button"
+					onClick={() => onAdd("top")}
+					className="rounded-full rounded-t-none"
+				>
+					<Plus />
 				</button>
 			</div>
-			<button type="button" onClick={() => onAdd("bottom")}>
-				+
-			</button>
+			<div className="layout-content">
+				<div className="button-container">
+					<button
+						type="button"
+						onClick={() => onAdd("left")}
+						className="rounded-full rounded-l-none"
+					>
+						<Plus />
+					</button>
+				</div>
+				{<Renderer layout={layout} />}
+				<div className="button-container">
+					<button
+						type="button"
+						onClick={() => onAdd("right")}
+						className="rounded-full rounded-r-none"
+					>
+						<Plus />
+					</button>
+				</div>
+			</div>
+			<div className="button-container">
+				<button
+					type="button"
+					onClick={() => onAdd("bottom")}
+					className="rounded-full rounded-b-none"
+				>
+					<Plus />
+				</button>
+			</div>
 		</div>
 	);
 };

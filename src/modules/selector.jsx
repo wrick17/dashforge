@@ -19,9 +19,9 @@ export const Selector = () => {
 	}
 
 	return (
-		<div className="selector">
-			<h1>Select App</h1>
-			<div className="flex">
+		<div className="selector h-full flex justify-center items-center">
+			<h1 className='mb-4'>Select App</h1>
+			<div className="flex flex-col gap-2">
 				<button type="button" onClick={() => setApp("todo")}>
 					Todo
 				</button>
