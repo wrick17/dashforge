@@ -8,8 +8,6 @@ export const Layout = ({ initialConfig = [["selector"]] }) => {
 	const [layout, setLayout] = useState(initialConfig);
 	const [choose, setChoose] = useState();
 
-	console.log(layout);
-
 	const onAdd = (side) => {
 		setChoose(side);
 	};
@@ -91,16 +89,15 @@ export const Layout = ({ initialConfig = [["selector"]] }) => {
 	};
 
 	const showButtons = layout?.[0]?.[0] !== "selector";
-	console.log("🚀", layout?.[0]?.[0]);
 
 	return (
 		<div className="layout">
 			{showButtons && (
-				<div className="button-container">
+				<div className="button-container horizontal">
 					<button
 						type="button"
 						onClick={() => onAdd("top")}
-						className="rounded-full rounded-t-none"
+						className="rounded-full rounded-t-none top-0"
 					>
 						<Plus />
 					</button>
@@ -108,11 +105,11 @@ export const Layout = ({ initialConfig = [["selector"]] }) => {
 			)}
 			<div className="layout-content">
 				{showButtons && (
-					<div className="button-container">
+					<div className="button-container vertical">
 						<button
 							type="button"
 							onClick={() => onAdd("left")}
-							className="rounded-full rounded-l-none"
+							className="rounded-full rounded-l-none left-0"
 						>
 							<Plus />
 						</button>
@@ -120,11 +117,11 @@ export const Layout = ({ initialConfig = [["selector"]] }) => {
 				)}
 				<Renderer layout={layout} onSelect={(app) => onSelect(app, true)} />
 				{showButtons && (
-					<div className="button-container">
+					<div className="button-container vertical">
 						<button
 							type="button"
 							onClick={() => onAdd("right")}
-							className="rounded-full rounded-r-none"
+							className="rounded-full rounded-r-none right-0"
 						>
 							<Plus />
 						</button>
@@ -132,11 +129,11 @@ export const Layout = ({ initialConfig = [["selector"]] }) => {
 				)}
 			</div>
 			{showButtons && (
-				<div className="button-container">
+				<div className="button-container horizontal">
 					<button
 						type="button"
 						onClick={() => onAdd("bottom")}
-						className="rounded-full rounded-b-none"
+						className="rounded-full rounded-b-none bottom-0"
 					>
 						<Plus />
 					</button>

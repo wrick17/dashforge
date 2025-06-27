@@ -5,5 +5,5 @@ export const SVG = () => {
 		console.log("SVG Loaded");
 	}, []);
 
-	return <h1 className='bg-red-300'>SVG</h1>;
+	return <h1 className="">SVG</h1>;
 };
