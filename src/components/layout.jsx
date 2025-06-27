@@ -1,12 +1,23 @@
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { hash } from "../utils/hash";
 import { Choose } from "./choose";
 import { Renderer } from "./renderer";
 
-export const Layout = ({ initialConfig = [["selector"]] }) => {
-	const [layout, setLayout] = useState(initialConfig);
+export const Layout = ({ id, initialConfig }) => {
+	let config = initialConfig;
+	try {
+		const cache = localStorage.getItem(id);
+		if (cache) {
+			config = JSON.parse(localStorage.getItem(id));
+		}
+	} catch (_e) {}
+	const [layout, setLayout] = useState(config);
 	const [choose, setChoose] = useState();
+
+	useEffect(() => {
+		localStorage.setItem(id, JSON.stringify(layout));
+	}, [layout, id]);
 
 	const onAdd = (side) => {
 		setChoose(side);
@@ -32,11 +43,15 @@ export const Layout = ({ initialConfig = [["selector"]] }) => {
 					[
 						{
 							id: hash(),
-							type: 'layout',
-							config: [[ {
-								id: hash(),
-								type: app,
-							} ]]
+							type: "layout",
+							config: [
+								[
+									{
+										id: hash(),
+										type: app,
+									},
+								],
+							],
 						},
 					],
 					...oldLayout,
@@ -46,11 +61,15 @@ export const Layout = ({ initialConfig = [["selector"]] }) => {
 					[
 						{
 							id: hash(),
-							type: 'layout',
-							config: [[ {
-								id: hash(),
-								type: app,
-							} ]]
+							type: "layout",
+							config: [
+								[
+									{
+										id: hash(),
+										type: app,
+									},
+								],
+							],
 						},
 						...oldLayout[0],
 					],
@@ -61,11 +80,15 @@ export const Layout = ({ initialConfig = [["selector"]] }) => {
 						...oldLayout[0],
 						{
 							id: hash(),
-							type: 'layout',
-							config: [[ {
-								id: hash(),
-								type: app,
-							} ]]
+							type: "layout",
+							config: [
+								[
+									{
+										id: hash(),
+										type: app,
+									},
+								],
+							],
 						},
 					],
 				]);
@@ -75,11 +98,15 @@ export const Layout = ({ initialConfig = [["selector"]] }) => {
 					[
 						{
 							id: hash(),
-							type: 'layout',
-							config: [[ {
-								id: hash(),
-								type: app,
-							} ]]
+							type: "layout",
+							config: [
+								[
+									{
+										id: hash(),
+										type: app,
+									},
+								],
+							],
 						},
 					],
 				]);

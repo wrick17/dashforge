@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { appMap, Selector } from "../modules/selector";
+import { appMap } from "../modules/selector";
 import { Layout } from "./layout";
 import { ResizableDivider } from "./ResizableDivider";
-import { hash } from "../utils/hash";
 
-export const Renderer = ({ layout, onSelect }) => {
+export const Renderer = ({ layout }) => {
 	const totalWidth = 100;
 	const totalHeight = 100;
 
@@ -166,10 +165,8 @@ export const Renderer = ({ layout, onSelect }) => {
 											}}
 											key={item?.id}
 										>
-											{item === "selector" ? (
-												<Selector onSelect={onSelect} />
-											) : item?.type === "layout" ? (
-												<Layout initialConfig={item.config} />
+											{item?.type === "layout" ? (
+												<Layout initialConfig={item.config} id={item.id} />
 											) : (
 												<RenderApp />
 											)}
