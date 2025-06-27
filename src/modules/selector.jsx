@@ -25,19 +25,19 @@ export const Selector = ({ onSelect }) => {
 	}
 
 	return (
-		<div className="selector h-full flex justify-center items-center">
-			<h1 className="mb-4">Select App</h1>
-			<div className="flex flex-col gap-2">
-				<button type="button" onClick={() => handleSelect("todo")}>
+		<div className="selector h-full flex">
+			<h1 className="mb-4 text-xl p-2 text-left">Select App</h1>
+			<div className="flex flex-col w-full min-w-xs">
+				<button type="button" className='text-left px-2 py-2 rounded-md cursor-pointer hover:bg-gray-700' onClick={() => handleSelect("todo")}>
 					Todo
 				</button>
-				<button type="button" onClick={() => handleSelect("svg")}>
+				<button type="button" className='text-left px-2 py-2 rounded-md cursor-pointer hover:bg-gray-700' onClick={() => handleSelect("svg")}>
 					SVG
 				</button>
-				<button type="button" onClick={() => handleSelect("encoder")}>
+				<button type="button" className='text-left px-2 py-2 rounded-md cursor-pointer hover:bg-gray-700' onClick={() => handleSelect("encoder")}>
 					Encoder
 				</button>
-				<button type="button" onClick={() => handleSelect("decoder")}>
+				<button type="button" className='text-left px-2 py-2 rounded-md cursor-pointer hover:bg-gray-700' onClick={() => handleSelect("decoder")}>
 					Decoder
 				</button>
 			</div>

@@ -15,6 +15,10 @@ export const Layout = ({ initialConfig = [["selector"]] }) => {
 	};
 
 	const onSelect = (app, initial) => {
+		if (!app) {
+			setChoose();
+			return;
+		}
 		if (initial) {
 			setLayout([
 				[
