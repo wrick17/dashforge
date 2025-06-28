@@ -103,7 +103,6 @@ body {
 	min-height: 10px;
 	min-width: 10px;
 	position: relative;
-	transition: all 0.2s ease;
 }
 
 .button-container button {
@@ -133,25 +132,19 @@ body {
 	border-radius: 5px;
 	height: 100%;
 	width: 100%;
-	transition: all 0.2s ease;
 }
 
 .button-container:hover::after {
 	background-color: #1f2937;
 }
-/* 
-.button-container.horizontal:hover::after {
-	width: calc(100% - 30px);
-	height: calc(100% - 2px);
-}
-
-.button-container.vertical:hover::after {
-	width: calc(100% - 2px);
-	height: calc(100% - 4px);
-} */
 
 .button-container:hover button {
 	height: 32px;
 	width: 32px;
 	font-size: 2rem;
+}
+
+:is(.layout):has(> .button-container:hover),
+:is(.layout):has(> .layout-content > .button-container:hover) {
+	border-color: #60a5fa;
 }

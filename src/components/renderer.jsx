@@ -22,11 +22,16 @@ export const Renderer = ({ layout, postResize, onRemove }) => {
 
 	// Update pane sizes when layout changes
 	useEffect(() => {
-		setPaneSizes(
-			layout.map((row) => Array(row.length).fill(totalWidth / row.length)),
+		const newPaneSizes = layout.map((row) =>
+			Array(row.length).fill(totalWidth / row.length),
 		);
-		setRowHeights(Array(layout.length).fill(totalHeight / layout.length));
-	}, [layout]);
+		const newRowHeights = Array(layout.length).fill(
+			totalHeight / layout.length,
+		);
+		setPaneSizes(newPaneSizes);
+		setRowHeights(newRowHeights);
+		postResize(newPaneSizes, newRowHeights);
+	}, [layout, postResize]);
 
 	const handleHorizontalResize = (rowIndex, paneIndex, delta) => {
 		setPaneSizes((prevSizes) => {
@@ -171,18 +176,22 @@ export const Renderer = ({ layout, postResize, onRemove }) => {
 											key={item?.id}
 										>
 											{item?.type === "layout" ? (
-												<Layout initialConfig={item.config} id={item.id} />
+												<Layout
+													initialConfig={item.config}
+													id={item.id}
+													onEmpty={onRemove}
+												/>
 											) : (
-												<>
+												<div className="flex flex-col relative">
 													<RenderApp />
 													<button
 														type="button"
-														className="absolute top-0 right-0 bg-gray-500 text-white rounded-bl-xl p-2 hover:bg-gray-600"
+														className="absolute top-0 right-0 bg-gray-900 text-white rounded-full p-2 hover:bg-gray-600"
 														onClick={() => onRemove(item.id)}
 													>
 														<Trash size={16} />
 													</button>
-												</>
+												</div>
 											)}
 										</div>
 										{row.length > 1 && index < row.length - 1 && (
