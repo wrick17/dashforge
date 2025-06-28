@@ -115,6 +115,16 @@ export const Layout = ({ id, initialConfig }) => {
 		}
 	};
 
+	const postResize = (paneSizes, rowHeights) => {
+		console.log({ paneSizes, rowHeights });
+	};
+
+	const onRemove = (id) => {
+		setLayout((oldLayout) => oldLayout.filter((row) => row.id !== id));
+	};
+
+	console.log(layout);
+
 	const showButtons = layout?.[0]?.[0] !== "selector";
 
 	return (
@@ -142,7 +152,12 @@ export const Layout = ({ id, initialConfig }) => {
 						</button>
 					</div>
 				)}
-				<Renderer layout={layout} onSelect={(app) => onSelect(app, true)} />
+				<Renderer
+					layout={layout}
+					onSelect={(app) => onSelect(app, true)}
+					postResize={postResize}
+					onRemove={onRemove}
+				/>
 				{showButtons && (
 					<div className="button-container vertical">
 						<button

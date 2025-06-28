@@ -4,6 +4,7 @@ export const ResizableDivider = ({
 	onResize,
 	direction = "horizontal",
 	className = "",
+	afterResize,
 }) => {
 	const [isDragging, setIsDragging] = useState(false);
 	const [startPos, setStartPos] = useState(0);
@@ -35,7 +36,8 @@ export const ResizableDivider = ({
 
 	const handleMouseUp = useCallback(() => {
 		setIsDragging(false);
-	}, []);
+		afterResize();
+	}, [afterResize]);
 
 	// Add global mouse event listeners when dragging
 	useEffect(() => {

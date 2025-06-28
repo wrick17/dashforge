@@ -1,9 +1,10 @@
+import { Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { appMap } from "../modules/selector";
 import { Layout } from "./layout";
 import { ResizableDivider } from "./ResizableDivider";
 
-export const Renderer = ({ layout }) => {
+export const Renderer = ({ layout, postResize, onRemove }) => {
 	const totalWidth = 100;
 	const totalHeight = 100;
 
@@ -115,6 +116,10 @@ export const Renderer = ({ layout }) => {
 		});
 	};
 
+	const afterResize = () => {
+		postResize(paneSizes, rowHeights);
+	};
+
 	return (
 		<div
 			className="renderer"
@@ -168,7 +173,16 @@ export const Renderer = ({ layout }) => {
 											{item?.type === "layout" ? (
 												<Layout initialConfig={item.config} id={item.id} />
 											) : (
-												<RenderApp />
+												<>
+													<RenderApp />
+													<button
+														type="button"
+														className="absolute top-0 right-0 bg-gray-500 text-white rounded-bl-xl p-2 hover:bg-gray-600"
+														onClick={() => onRemove(item.id)}
+													>
+														<Trash size={16} />
+													</button>
+												</>
 											)}
 										</div>
 										{row.length > 1 && index < row.length - 1 && (
@@ -177,6 +191,7 @@ export const Renderer = ({ layout }) => {
 												onResize={(delta) =>
 													handleHorizontalResize(rowIndex, index, delta)
 												}
+												afterResize={afterResize}
 											/>
 										)}
 									</>
@@ -187,6 +202,7 @@ export const Renderer = ({ layout }) => {
 							<ResizableDivider
 								direction="vertical"
 								onResize={(delta) => handleVerticalResize(rowIndex, delta)}
+								afterResize={afterResize}
 							/>
 						)}
 					</>
