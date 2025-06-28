@@ -1,12 +1,13 @@
 {
-  "name": "tmux-webapps",
+  "name": "dashforge",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "rsbuild build",
     "dev": "rsbuild dev",
-    "preview": "rsbuild preview"
+    "preview": "rsbuild preview",
+    "deploy": "bun run build && bunx surge ./dist https://dashforge.surge.sh"
   },
   "dependencies": {
     "@biomejs/biome": "^2.0.6",
