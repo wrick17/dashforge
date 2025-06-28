@@ -4,15 +4,15 @@ import { hash } from "../utils/hash";
 import { Choose } from "./choose";
 import { Renderer } from "./renderer";
 
-export const Layout = ({ id, initialConfig, onEmpty }) => {
-	let config = initialConfig;
+export const Layout = ({ id, initialData, onEmpty }) => {
+	let cache = initialData;
 	try {
-		const cache = localStorage.getItem(id);
-		if (cache) {
-			config = JSON.parse(localStorage.getItem(id));
+		const cacheString = localStorage.getItem(`layout_${id}`);
+		if (cacheString) {
+			cache = JSON.parse(cacheString);
 		}
 	} catch (_e) {}
-	const [layout, setLayout] = useState(config);
+	const [layout, setLayout] = useState(cache?.config);
 	const [choose, setChoose] = useState();
 	const mainLayoutIndex = useRef(0);
 
@@ -22,13 +22,16 @@ export const Layout = ({ id, initialConfig, onEmpty }) => {
 			layout.length > 0 &&
 			!layout.every((row) => row.length === 0)
 		) {
-			localStorage.setItem(id, JSON.stringify(layout));
+			localStorage.setItem(
+				`layout_${id}`,
+				JSON.stringify({ splits: {}, config: layout }),
+			);
 		} else if (
 			layout &&
 			(layout.length === 0 || layout.every((row) => row.length === 0))
 		) {
 			// Remove from localStorage if layout is empty
-			localStorage.removeItem(id);
+			localStorage.removeItem(`layout_${id}`);
 		}
 	}, [layout, id]);
 
@@ -140,7 +143,13 @@ export const Layout = ({ id, initialConfig, onEmpty }) => {
 	};
 
 	const postResize = (paneSizes, rowHeights) => {
-		// console.log(id, { paneSizes, rowHeights });
+		localStorage.setItem(
+			`layout_${id}`,
+			JSON.stringify({
+				splits: { paneSizes, rowHeights },
+				config: layout,
+			}),
+		);
 	};
 
 	const onRemove = (id) => {
@@ -153,7 +162,7 @@ export const Layout = ({ id, initialConfig, onEmpty }) => {
 							if (item.id === id) {
 								// Clean up localStorage for removed layout items
 								if (item.type === "layout") {
-									localStorage.removeItem(item.id);
+									localStorage.removeItem(`layout_${item.id}`);
 								}
 								return false;
 							}
@@ -168,7 +177,7 @@ export const Layout = ({ id, initialConfig, onEmpty }) => {
 									newConfig.every((r) => r.length === 0)
 								) {
 									// Clean up localStorage for the layout that's being removed
-									localStorage.removeItem(item.id);
+									localStorage.removeItem(`layout_${item.id}`);
 									return false;
 								}
 
@@ -230,13 +239,16 @@ export const Layout = ({ id, initialConfig, onEmpty }) => {
 						</button>
 					</div>
 				)}
-				<Renderer
-					key={JSON.stringify(layout)}
-					layout={layout}
-					onSelect={(app) => onSelect(app, true)}
-					postResize={postResize}
-					onRemove={onRemove}
-				/>
+				{layout ? (
+					<Renderer
+						key={JSON.stringify(layout)}
+						layout={layout}
+						splits={cache.splits || {}}
+						onSelect={(app) => onSelect(app, true)}
+						postResize={postResize}
+						onRemove={onRemove}
+					/>
+				) : null}
 				{showButtons && (
 					<div className="button-container vertical">
 						<button

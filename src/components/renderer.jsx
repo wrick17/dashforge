@@ -1,37 +1,62 @@
 import { Trash } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { appMap } from "../modules/selector";
+import { debounce } from "../utils/hash";
 import { Layout } from "./layout";
 import { ResizableDivider } from "./ResizableDivider";
 
-export const Renderer = ({ layout, postResize, onRemove }) => {
+export const Renderer = ({ layout, splits, postResize, onRemove }) => {
 	const totalWidth = 100;
 	const totalHeight = 100;
 
 	// Track pane sizes for each row (as percentages of available space)
 	const [paneSizes, setPaneSizes] = useState(() => {
+		if (splits.paneSizes) {
+			return splits.paneSizes;
+		}
 		// Initialize equal sizes for each row
 		return layout.map((row) => Array(row.length).fill(totalWidth / row.length));
 	});
 
 	// Track row heights (as percentages of available space)
 	const [rowHeights, setRowHeights] = useState(() => {
+		if (splits.rowHeights) {
+			return splits.rowHeights;
+		}
 		// Initialize equal heights for each row
 		return Array(layout.length).fill(totalHeight / layout.length);
 	});
 
+	const debouncedPostResize = useCallback(debounce(postResize, 500), []);
+
 	// Update pane sizes when layout changes
 	useEffect(() => {
-		const newPaneSizes = layout.map((row) =>
-			Array(row.length).fill(totalWidth / row.length),
-		);
-		const newRowHeights = Array(layout.length).fill(
-			totalHeight / layout.length,
-		);
-		setPaneSizes(newPaneSizes);
-		setRowHeights(newRowHeights);
-		postResize(newPaneSizes, newRowHeights);
-	}, [layout, postResize]);
+		// Only reset to equal sizes if we don't have cached sizes that match the current layout structure
+		const shouldResetPaneSizes = !splits.paneSizes || 
+			splits.paneSizes.length !== layout.length ||
+			splits.paneSizes.some((row, i) => row.length !== layout[i].length);
+		
+		const shouldResetRowHeights = !splits.rowHeights || 
+			splits.rowHeights.length !== layout.length;
+
+		if (shouldResetPaneSizes) {
+			const newPaneSizes = layout.map((row) =>
+				Array(row.length).fill(totalWidth / row.length),
+			);
+			setPaneSizes(newPaneSizes);
+		}
+
+		if (shouldResetRowHeights) {
+			const newRowHeights = Array(layout.length).fill(
+				totalHeight / layout.length,
+			);
+			setRowHeights(newRowHeights);
+		}
+	}, [layout, splits.paneSizes, splits.rowHeights]);
+
+	useEffect(() => {
+		debouncedPostResize(paneSizes, rowHeights);
+	}, [paneSizes, rowHeights, debouncedPostResize]);
 
 	const handleHorizontalResize = (rowIndex, paneIndex, delta) => {
 		setPaneSizes((prevSizes) => {
@@ -177,7 +202,10 @@ export const Renderer = ({ layout, postResize, onRemove }) => {
 										>
 											{item?.type === "layout" ? (
 												<Layout
-													initialConfig={item.config}
+													initialData={{
+														splits,
+														config: item.config,
+													}}
 													id={item.id}
 													onEmpty={onRemove}
 												/>

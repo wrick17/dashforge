@@ -9,38 +9,39 @@ import { hash } from "./utils/hash";
 const App = () => {
 	let home;
 	try {
-		const cache = localStorage.getItem("home");
-		home = cache ? JSON.parse(cache) : null;
+		const cache = localStorage.getItem("layout_home");
+		if (cache) {
+			home = JSON.parse(cache);
+		}
 	} catch (_e) {}
-	const [initialConfig, setInitialConfig] = useState(home);
+	const [initialData, setInitialConfig] = useState(home);
 
 	const onSelect = (app) => {
-		setInitialConfig([
-			[
-				{
-					id: hash(),
-					type: "layout",
-					config: [
-						[
-							{
-								id: hash(),
-								type: app,
-							},
+		setInitialConfig({
+			splits: {},
+			config: [
+				[
+					{
+						id: hash(),
+						type: "layout",
+						config: [
+							[
+								{
+									id: hash(),
+									type: app,
+								},
+							],
 						],
-					],
-				},
+					},
+				],
 			],
-		]);
+		});
 	};
 
 	return (
 		<div className="content">
-			{initialConfig ? (
-				<Layout
-					initialConfig={initialConfig}
-					onSelect={initialConfig}
-					id="home"
-				/>
+			{initialData ? (
+				<Layout initialData={initialData} onSelect={initialData} id="home" />
 			) : (
 				<Choose onSelect={onSelect} />
 			)}
