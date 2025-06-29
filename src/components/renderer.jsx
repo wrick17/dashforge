@@ -1,11 +1,13 @@
-import { Trash } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { appMap } from "../modules/selector";
-import { debounce } from "../utils/hash";
-import { Layout } from "./layout";
-import { ResizableDivider } from "./ResizableDivider";
+import { Trash } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { useEditable } from '../hooks/store';
+import { appMap } from '../modules/selector';
+import { debounce } from '../utils';
+import { Layout } from './Layout';
+import { ResizableDivider } from './ResizableDivider';
 
-export const Renderer = ({ layout, splits, postResize, onRemove }) => {
+export const Renderer = ({ id, layout, splits = {}, postResize, onRemove, tabId }) => {
+	const { isEditing } = useEditable();
 	const totalWidth = 100;
 	const totalHeight = 100;
 
@@ -15,7 +17,7 @@ export const Renderer = ({ layout, splits, postResize, onRemove }) => {
 			return splits.paneSizes;
 		}
 		// Initialize equal sizes for each row
-		return layout.map((row) => Array(row.length).fill(totalWidth / row.length));
+		return layout.map(row => Array(row.length).fill(totalWidth / row.length));
 	});
 
 	// Track row heights (as percentages of available space)
@@ -32,24 +34,21 @@ export const Renderer = ({ layout, splits, postResize, onRemove }) => {
 	// Update pane sizes when layout changes
 	useEffect(() => {
 		// Only reset to equal sizes if we don't have cached sizes that match the current layout structure
-		const shouldResetPaneSizes = !splits.paneSizes || 
+		const shouldResetPaneSizes =
+			!splits.paneSizes ||
 			splits.paneSizes.length !== layout.length ||
 			splits.paneSizes.some((row, i) => row.length !== layout[i].length);
-		
-		const shouldResetRowHeights = !splits.rowHeights || 
-			splits.rowHeights.length !== layout.length;
+
+		const shouldResetRowHeights =
+			!splits.rowHeights || splits.rowHeights.length !== layout.length;
 
 		if (shouldResetPaneSizes) {
-			const newPaneSizes = layout.map((row) =>
-				Array(row.length).fill(totalWidth / row.length),
-			);
+			const newPaneSizes = layout.map(row => Array(row.length).fill(totalWidth / row.length));
 			setPaneSizes(newPaneSizes);
 		}
 
 		if (shouldResetRowHeights) {
-			const newRowHeights = Array(layout.length).fill(
-				totalHeight / layout.length,
-			);
+			const newRowHeights = Array(layout.length).fill(totalHeight / layout.length);
 			setRowHeights(newRowHeights);
 		}
 	}, [layout, splits.paneSizes, splits.rowHeights]);
@@ -59,15 +58,13 @@ export const Renderer = ({ layout, splits, postResize, onRemove }) => {
 	}, [paneSizes, rowHeights, debouncedPostResize]);
 
 	const handleHorizontalResize = (rowIndex, paneIndex, delta) => {
-		setPaneSizes((prevSizes) => {
+		setPaneSizes(prevSizes => {
 			const newSizes = [...prevSizes];
 			const rowSizes = [...newSizes[rowIndex]];
 
 			// Get the container width dynamically
-			const rendererElement = document.querySelector(".renderer");
-			const containerWidth = rendererElement
-				? rendererElement.offsetWidth
-				: 800;
+			const rendererElement = document.querySelector('.renderer');
+			const containerWidth = rendererElement ? rendererElement.offsetWidth : 800;
 
 			// Calculate available width for panes (excluding dividers)
 			const numDividers = rowSizes.length - 1;
@@ -104,14 +101,12 @@ export const Renderer = ({ layout, splits, postResize, onRemove }) => {
 	};
 
 	const handleVerticalResize = (rowIndex, delta) => {
-		setRowHeights((prevHeights) => {
+		setRowHeights(prevHeights => {
 			const newHeights = [...prevHeights];
 
 			// Get the container height dynamically
-			const rendererElement = document.querySelector(".renderer");
-			const containerHeight = rendererElement
-				? rendererElement.offsetHeight
-				: 600;
+			const rendererElement = document.querySelector('.renderer');
+			const containerHeight = rendererElement ? rendererElement.offsetHeight : 600;
 
 			// Calculate available height for rows (excluding dividers)
 			const numDividers = newHeights.length - 1;
@@ -151,29 +146,23 @@ export const Renderer = ({ layout, splits, postResize, onRemove }) => {
 	};
 
 	return (
-		<div
-			className="renderer"
-			style={{ display: "flex", flexDirection: "column", height: "100%" }}
-		>
+		<div className="renderer" style={{ display: 'flex', flexDirection: 'column' }}>
 			{layout.map((row, rowIndex) => {
 				const currentRowSizes =
-					paneSizes[rowIndex] ||
-					Array(row.length).fill(totalWidth / row.length);
-				const currentRowHeight =
-					rowHeights[rowIndex] || totalHeight / layout.length;
+					paneSizes[rowIndex] || Array(row.length).fill(totalWidth / row.length);
+				const currentRowHeight = rowHeights[rowIndex] || totalHeight / layout.length;
 
 				return (
 					<>
 						<div
 							className="render-row"
-							key={row?.[0]?.id || "selector-row"}
+							key={row?.[0]?.id || 'selector-row'}
 							style={{
-								display: "flex",
+								display: 'flex',
 								flexGrow: currentRowHeight,
 								flexShrink: 1,
-								flexBasis: 0,
-								minHeight: "100px",
-								width: "100%",
+								flexBasis: '0',
+								width: '100%',
 							}}
 						>
 							{row.map((item, index) => {
@@ -184,8 +173,8 @@ export const Renderer = ({ layout, splits, postResize, onRemove }) => {
 									flexGrow: flexGrow,
 									flexShrink: 1,
 									flexBasis: 0,
-									minWidth: "100px", // Use px instead of % for better control
-									height: "100%",
+									minWidth: '100px', // Use px instead of % for better control
+									height: '100%',
 								};
 
 								const RenderApp = appMap[item.type];
@@ -195,37 +184,40 @@ export const Renderer = ({ layout, splits, postResize, onRemove }) => {
 										<div
 											style={{
 												...paneStyle,
-												display: "flex",
-												flexDirection: "column",
+												display: 'flex',
+												flexDirection: 'column',
 											}}
 											key={item?.id}
 										>
-											{item?.type === "layout" ? (
+											{item?.type === 'layout' ? (
 												<Layout
 													initialData={{
 														splits,
 														config: item.config,
 													}}
-													id={item.id}
+													id={item?.id}
 													onEmpty={onRemove}
+													tabId={tabId}
 												/>
 											) : (
 												<div className="flex flex-col relative">
 													<RenderApp />
-													<button
-														type="button"
-														className="absolute top-0 right-0 bg-gray-900 text-white rounded-full p-2 hover:bg-gray-600"
-														onClick={() => onRemove(item.id)}
-													>
-														<Trash size={16} />
-													</button>
+													{isEditing ? (
+														<button
+															type="button"
+															className="absolute top-0 right-0 bg-gray-900 text-white rounded-full p-2 hover:bg-gray-600"
+															onClick={() => onRemove(item.id)}
+														>
+															<Trash size={16} />
+														</button>
+													) : null}
 												</div>
 											)}
 										</div>
 										{row.length > 1 && index < row.length - 1 && (
 											<ResizableDivider
 												direction="horizontal"
-												onResize={(delta) =>
+												onResize={delta =>
 													handleHorizontalResize(rowIndex, index, delta)
 												}
 												afterResize={afterResize}
@@ -238,7 +230,7 @@ export const Renderer = ({ layout, splits, postResize, onRemove }) => {
 						{layout.length > 1 && rowIndex < layout.length - 1 && (
 							<ResizableDivider
 								direction="vertical"
-								onResize={(delta) => handleVerticalResize(rowIndex, delta)}
+								onResize={delta => handleVerticalResize(rowIndex, delta)}
 								afterResize={afterResize}
 							/>
 						)}

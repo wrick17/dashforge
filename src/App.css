@@ -7,9 +7,15 @@ body {
 	background-image: linear-gradient(to bottom, #020917, #101725);
 }
 
-.content {
+#root {
 	display: flex;
-	height: 100vh;
+	flex-direction: column;
+	min-height: 100dvh;
+}
+
+.content {
+	flex: 1;
+	display: flex;
 	line-height: 1.1;
 	text-align: center;
 	flex-direction: column;
@@ -53,7 +59,6 @@ body {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
-	height: 100%;
 	overflow: hidden;
 }
 

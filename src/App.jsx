@@ -1,51 +1,21 @@
-import { useState } from "react";
+import './App.css';
 
-import "./App.css";
-
-import { Choose } from "./components/choose";
-import { Layout } from "./components/layout";
-import { hash } from "./utils/hash";
+import { Footer } from './components/Footer';
+import { Header } from './components/Header';
+import { Layout } from './components/Layout';
+import { useTabs } from './hooks/store';
 
 const App = () => {
-	let home;
-	try {
-		const cache = localStorage.getItem("layout_home");
-		if (cache) {
-			home = JSON.parse(cache);
-		}
-	} catch (_e) {}
-	const [initialData, setInitialConfig] = useState(home);
-
-	const onSelect = (app) => {
-		setInitialConfig({
-			splits: {},
-			config: [
-				[
-					{
-						id: hash(),
-						type: "layout",
-						config: [
-							[
-								{
-									id: hash(),
-									type: app,
-								},
-							],
-						],
-					},
-				],
-			],
-		});
-	};
+	const { activeTab } = useTabs();
 
 	return (
-		<div className="content">
-			{initialData ? (
-				<Layout initialData={initialData} onSelect={initialData} id="home" />
-			) : (
-				<Choose onSelect={onSelect} />
-			)}
-		</div>
+		<>
+			<Header />
+			<main className="content">
+				<Layout id={activeTab} tabId={activeTab} key={activeTab} />
+			</main>
+			<Footer />
+		</>
 	);
 };
 
