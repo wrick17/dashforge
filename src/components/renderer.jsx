@@ -17,7 +17,7 @@ export const Renderer = ({ id, layout, splits = {}, postResize, onRemove, tabId 
 			return splits.paneSizes;
 		}
 		// Initialize equal sizes for each row
-		return layout.map(row => Array(row.length).fill(totalWidth / row.length));
+		return layout.map(row => new Array(row.length).fill(totalWidth / row.length));
 	});
 
 	// Track row heights (as percentages of available space)
@@ -26,7 +26,7 @@ export const Renderer = ({ id, layout, splits = {}, postResize, onRemove, tabId 
 			return splits.rowHeights;
 		}
 		// Initialize equal heights for each row
-		return Array(layout.length).fill(totalHeight / layout.length);
+		return new Array(layout.length).fill(totalHeight / layout.length);
 	});
 
 	const debouncedPostResize = useCallback(debounce(postResize, 500), []);
@@ -43,12 +43,14 @@ export const Renderer = ({ id, layout, splits = {}, postResize, onRemove, tabId 
 			!splits.rowHeights || splits.rowHeights.length !== layout.length;
 
 		if (shouldResetPaneSizes) {
-			const newPaneSizes = layout.map(row => Array(row.length).fill(totalWidth / row.length));
+			const newPaneSizes = layout.map(row =>
+				new Array(row.length).fill(totalWidth / row.length),
+			);
 			setPaneSizes(newPaneSizes);
 		}
 
 		if (shouldResetRowHeights) {
-			const newRowHeights = Array(layout.length).fill(totalHeight / layout.length);
+			const newRowHeights = new Array(layout.length).fill(totalHeight / layout.length);
 			setRowHeights(newRowHeights);
 		}
 	}, [layout, splits.paneSizes, splits.rowHeights]);
@@ -149,7 +151,7 @@ export const Renderer = ({ id, layout, splits = {}, postResize, onRemove, tabId 
 		<div className="renderer" style={{ display: 'flex', flexDirection: 'column' }}>
 			{layout.map((row, rowIndex) => {
 				const currentRowSizes =
-					paneSizes[rowIndex] || Array(row.length).fill(totalWidth / row.length);
+					paneSizes[rowIndex] || new Array(row.length).fill(totalWidth / row.length);
 				const currentRowHeight = rowHeights[rowIndex] || totalHeight / layout.length;
 
 				return (
