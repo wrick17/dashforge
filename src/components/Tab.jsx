@@ -41,9 +41,9 @@ export const Tab = ({ tab, otherProps, active, ...props }) => {
 				</form>
 			) : (
 				<>
-					<span className="mr-2">{tab.name}</span>
+					<span>{tab.name}</span>
 					{isEditing && (
-						<button type="button" onClick={() => setIsRenaming(true)}>
+						<button type="button" onClick={() => setIsRenaming(true)} className="ml-2">
 							<Pencil size={16} />
 						</button>
 					)}
