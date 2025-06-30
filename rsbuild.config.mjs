@@ -6,4 +6,7 @@ export default defineConfig({
 	html: {
 		title: "DashForge",
 	},
+	output: {
+		filename: '[name].[hash].js'
+	}
 });

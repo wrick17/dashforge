@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-export const Encoder = () => {
-	useEffect(() => {
-		
-	}, []);
+const Encoder = () => {
+	useEffect(() => {}, []);
 
 	return <h1>Encoder</h1>;
 };
+
+export default Encoder;

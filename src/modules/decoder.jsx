@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-export const Decoder = () => {
-	useEffect(() => {
-		
-	}, []);
+const Decoder = () => {
+	useEffect(() => {}, []);
 
 	return <h1>Decoder</h1>;
 };
+
+export default Decoder;

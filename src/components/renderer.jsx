@@ -1,13 +1,24 @@
-import { Trash } from 'lucide-react';
+import { ArrowLeftRight, Trash } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { useEditable } from '../hooks/store';
-import { appMap } from '../modules/selector';
-import { debounce } from '../utils';
+import { useEditable, useResize } from '../hooks/store';
+import { cn, debounce } from '../utils';
 import { Layout } from './Layout';
 import { ResizableDivider } from './ResizableDivider';
 
-export const Renderer = ({ id, layout, splits = {}, postResize, onRemove, tabId }) => {
+export const Renderer = ({
+	id,
+	layout,
+	splits = {},
+	postResize,
+	onRemove,
+	tabId,
+	itemProps,
+	appMap,
+	chooseNewWidget,
+}) => {
 	const { isEditing } = useEditable();
+	const { isResizing } = useResize();
+
 	const totalWidth = 100;
 	const totalHeight = 100;
 
@@ -200,18 +211,49 @@ export const Renderer = ({ id, layout, splits = {}, postResize, onRemove, tabId 
 													id={item?.id}
 													onEmpty={onRemove}
 													tabId={tabId}
+													appMap={appMap}
 												/>
 											) : (
-												<div className="flex flex-col relative">
-													<RenderApp />
+												<div
+													className={cn(
+														'flex flex-col relative flex-1  transition-all duration-100',
+														{
+															'touch-none pointer-events-none blur-lg':
+																isResizing,
+														},
+													)}
+												>
+													<RenderApp
+														config={itemProps?.getWidgetConfig(
+															item?.id,
+														)}
+														updateConfig={updatedConfig =>
+															itemProps?.updateWidgetConfig?.(
+																item?.id,
+																updatedConfig,
+															)
+														}
+														isEditing={isEditing}
+													/>
 													{isEditing ? (
-														<button
-															type="button"
-															className="absolute top-0 right-0 bg-gray-900 text-white rounded-full p-2 hover:bg-gray-600"
-															onClick={() => onRemove(item.id)}
-														>
-															<Trash size={16} />
-														</button>
+														<>
+															<button
+																type="button"
+																className="absolute top-0 right-0 bg-gray-900 text-white rounded-full p-2 hover:bg-gray-600"
+																onClick={() => onRemove(item.id)}
+															>
+																<Trash size={16} />
+															</button>
+															<button
+																type="button"
+																className="absolute top-0 left-0 bg-gray-900 text-white rounded-full p-2 hover:bg-gray-600"
+																onClick={() =>
+																	chooseNewWidget(item?.id)
+																}
+															>
+																<ArrowLeftRight size={16} />
+															</button>
+														</>
 													) : null}
 												</div>
 											)}

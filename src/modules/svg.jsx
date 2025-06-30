@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 
-export const SVG = () => {
+const SVG = () => {
 	useEffect(() => {
 		
 	}, []);
 
 	return <h1 className="">SVG</h1>;
 };
+
+export default SVG;

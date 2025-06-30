@@ -1,20 +1,27 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
+import { useResize } from '../hooks/store';
 
 export const ResizableDivider = ({
 	onResize,
-	direction = "horizontal",
-	className = "",
+	direction = 'horizontal',
+	className = '',
 	afterResize,
 }) => {
 	const [isDragging, setIsDragging] = useState(false);
 	const [startPos, setStartPos] = useState(0);
+	const { isResizing, setIsResizing } = useResize();
 
 	const handleMouseDown = useCallback(
-		(e) => {
+		e => {
 			setIsDragging(true);
-			const pos = direction === "horizontal"
-				? (e.touches ? e.touches[0].clientX : e.clientX)
-				: (e.touches ? e.touches[0].clientY : e.clientY);
+			const pos =
+				direction === 'horizontal'
+					? e.touches
+						? e.touches[0].clientX
+						: e.clientX
+					: e.touches
+						? e.touches[0].clientY
+						: e.clientY;
 			setStartPos(pos);
 			e.preventDefault();
 		},
@@ -22,12 +29,19 @@ export const ResizableDivider = ({
 	);
 
 	const handleMouseMove = useCallback(
-		(e) => {
-			if (!isDragging) return;
+		e => {
+			if (!isDragging) {
+				return;
+			}
 
-			const currentPos = direction === "horizontal"
-				? (e.touches ? e.touches[0].clientX : e.clientX)
-				: (e.touches ? e.touches[0].clientY : e.clientY);
+			const currentPos =
+				direction === 'horizontal'
+					? e.touches
+						? e.touches[0].clientX
+						: e.clientX
+					: e.touches
+						? e.touches[0].clientY
+						: e.clientY;
 			const delta = currentPos - startPos;
 
 			if (onResize) {
@@ -46,9 +60,9 @@ export const ResizableDivider = ({
 
 	// Touch event handlers
 	const handleTouchStart = useCallback(
-		(e) => {
+		e => {
 			setIsDragging(true);
-			const pos = direction === "horizontal" ? e.touches[0].clientX : e.touches[0].clientY;
+			const pos = direction === 'horizontal' ? e.touches[0].clientX : e.touches[0].clientY;
 			setStartPos(pos);
 			e.preventDefault();
 		},
@@ -56,9 +70,12 @@ export const ResizableDivider = ({
 	);
 
 	const handleTouchMove = useCallback(
-		(e) => {
-			if (!isDragging) return;
-			const currentPos = direction === "horizontal" ? e.touches[0].clientX : e.touches[0].clientY;
+		e => {
+			if (!isDragging) {
+				return;
+			}
+			const currentPos =
+				direction === 'horizontal' ? e.touches[0].clientX : e.touches[0].clientY;
 			const delta = currentPos - startPos;
 			if (onResize) {
 				onResize(delta);
@@ -73,30 +90,34 @@ export const ResizableDivider = ({
 		afterResize();
 	}, [afterResize]);
 
+	useEffect(() => {
+		setIsResizing(isDragging);
+	}, [isDragging]);
+
 	// Add global mouse and touch event listeners when dragging
 	useEffect(() => {
 		if (isDragging) {
-			document.addEventListener("mousemove", handleMouseMove);
-			document.addEventListener("mouseup", handleMouseUp);
-			document.addEventListener("touchmove", handleTouchMove);
-			document.addEventListener("touchend", handleTouchEnd);
+			document.addEventListener('mousemove', handleMouseMove);
+			document.addEventListener('mouseup', handleMouseUp);
+			document.addEventListener('touchmove', handleTouchMove);
+			document.addEventListener('touchend', handleTouchEnd);
 
 			return () => {
-				document.removeEventListener("mousemove", handleMouseMove);
-				document.removeEventListener("mouseup", handleMouseUp);
-				document.removeEventListener("touchmove", handleTouchMove);
-				document.removeEventListener("touchend", handleTouchEnd);
+				document.removeEventListener('mousemove', handleMouseMove);
+				document.removeEventListener('mouseup', handleMouseUp);
+				document.removeEventListener('touchmove', handleTouchMove);
+				document.removeEventListener('touchend', handleTouchEnd);
 			};
 		}
 	}, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
 	const baseClasses =
-		direction === "horizontal" ? "w-2 cursor-col-resize" : "h-2 w-full cursor-row-resize";
+		direction === 'horizontal' ? 'w-2 cursor-col-resize' : 'h-2 w-full cursor-row-resize';
 
 	return (
 		<div
 			className={`${baseClasses} bg-gray-200 dark:bg-gray-800 resizable-divider ${className} ${
-				isDragging ? "dragging" : ""
+				isDragging ? 'dragging' : ''
 			}`}
 			onMouseDown={handleMouseDown}
 			onTouchStart={handleTouchStart}
@@ -107,9 +128,9 @@ export const ResizableDivider = ({
 			aria-valuemax={100}
 			aria-valuenow={50}
 			tabIndex={0}
-			onKeyDown={(e) => {
+			onKeyDown={e => {
 				// Allow keyboard navigation for accessibility
-				if (e.key === "Enter" || e.key === " ") {
+				if (e.key === 'Enter' || e.key === ' ') {
 					e.preventDefault();
 				}
 			}}

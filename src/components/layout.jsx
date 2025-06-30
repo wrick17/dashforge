@@ -1,11 +1,11 @@
 import { Plus } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useEditable } from '../hooks/store';
 import { hash } from '../utils';
 import { Choose } from './Choose';
 import { Renderer } from './Renderer';
 
-export const Layout = ({ id, initialData, onEmpty, tabId }) => {
+export const Layout = ({ id, initialData, onEmpty, tabId, appMap }) => {
 	let cache = initialData;
 	try {
 		const cacheString = localStorage.getItem(`tab_${tabId}_layout_${id}`);
@@ -18,6 +18,13 @@ export const Layout = ({ id, initialData, onEmpty, tabId }) => {
 
 	const mainLayoutIndex = useRef(0);
 	const { isEditing } = useEditable();
+
+	const chooseNewWidget = id => {
+		setChoose({
+			type: 'change',
+			id,
+		});
+	};
 
 	useEffect(() => {
 		if (layout && layout.length > 0 && !layout.every(row => row.length === 0)) {
@@ -40,6 +47,20 @@ export const Layout = ({ id, initialData, onEmpty, tabId }) => {
 
 	const onSelect = (app, initial) => {
 		if (!app) {
+			setChoose();
+			return;
+		}
+		if (choose?.type === 'change') {
+			setLayout(oldLayout => {
+				return oldLayout.map(row => {
+					return row.map(item => {
+						if (item.id === choose?.id) {
+							return { ...item, type: app };
+						}
+					});
+				});
+			});
+			localStorage.removeItem(`widget_${choose?.id}`);
 			setChoose();
 			return;
 		}
@@ -228,6 +249,18 @@ export const Layout = ({ id, initialData, onEmpty, tabId }) => {
 		});
 	};
 
+	const getWidgetConfig = itemId => {
+		const cacheString = localStorage.getItem(`widget_${itemId}`);
+		if (cacheString) {
+			return JSON.parse(cacheString);
+		}
+		return;
+	};
+
+	const updateWidgetConfig = (itemId, updatedConfig) => {
+		localStorage.setItem(`widget_${itemId}`, JSON.stringify(updatedConfig));
+	};
+
 	const showButtons = layout?.[0]?.[0] !== 'selector' && isEditing;
 
 	return (
@@ -256,16 +289,21 @@ export const Layout = ({ id, initialData, onEmpty, tabId }) => {
 					</div>
 				)}
 				{layout ? (
-					<Renderer
-						key={JSON.stringify(layout)}
-						layout={layout}
-						splits={cache?.splits}
-						onSelect={app => onSelect(app)}
-						postResize={postResize}
-						onRemove={onRemove}
-						tabId={tabId}
-						id={id}
-					/>
+					<Suspense fallback={<div>Loading...</div>}>
+						<Renderer
+							key={JSON.stringify(layout)}
+							layout={layout}
+							splits={cache?.splits}
+							onSelect={app => onSelect(app)}
+							postResize={postResize}
+							onRemove={onRemove}
+							tabId={tabId}
+							id={id}
+							itemProps={{ getWidgetConfig, updateWidgetConfig }}
+							appMap={appMap}
+							chooseNewWidget={chooseNewWidget}
+						/>
+					</Suspense>
 				) : null}
 				{showButtons && (
 					<div className="button-container vertical">
@@ -290,7 +328,7 @@ export const Layout = ({ id, initialData, onEmpty, tabId }) => {
 					</button>
 				</div>
 			)}
-			{choose && <Choose onSelect={onSelect} id={id} tabId={tabId} />}
+			{choose && <Choose onSelect={onSelect} id={id} tabId={tabId} appMap={appMap} />}
 		</div>
 	);
 };

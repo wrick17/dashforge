@@ -56,3 +56,9 @@ export const useTabs = create(
 		},
 	),
 );
+
+// this will be used as a common variable to track if the user is dragging any divider in our whole app.
+export const useResize = create(set => ({
+	isResizing: false,
+	setIsResizing: isResizing => set({ isResizing }),
+}));
