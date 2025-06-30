@@ -12,7 +12,7 @@ const Youtube = ({ config, updateConfig, isEditing }) => {
 		updateConfig?.({ url });
 	};
 
-	const id = url.split('v=')[1];
+	const id = url.split('v=')[1]?.split('&')[0];
 	const embedUrl = `https://www.youtube.com/embed/${id}`;
 
 	if (!url || isUpdating) {
@@ -38,7 +38,14 @@ const Youtube = ({ config, updateConfig, isEditing }) => {
 
 	return (
 		<div className="relative flex-1 h-full">
-			<iframe src={embedUrl} className="w-full h-full" />
+			<iframe
+				src={embedUrl}
+				className="w-full h-full"
+				title="YouTube video player"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				referrerPolicy="strict-origin-when-cross-origin"
+				allowFullScreen
+			/>
 			{isEditing && (
 				<button
 					className="absolute bottom-0 right-0 bg-gray-100 text-gray-900 rounded-full p-3 hover:bg-gray-600 shadow-2xl"
